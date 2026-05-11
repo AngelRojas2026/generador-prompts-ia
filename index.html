@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prompt Master - Generador de Prompts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white font-sans">
+    <div class="container mx-auto px-4 py-12 max-w-2xl">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-blue-400 mb-2">AI Prompt Master</h1>
+            <p class="text-slate-400">Crea prompts profesionales para ChatGPT y Midjourney en segundos.</p>
+        </header>
+
+        <div class="bg-slate-800 p-6 rounded-xl shadow-xl border border-slate-700">
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">¿Qué quieres crear?</label>
+                <select id="tipo" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 outline-none focus:border-blue-500 text-white">
+                    <option value="un artículo para blog">Artículo para Blog</option>
+                    <option value="un guion de YouTube">Guion de YouTube</option>
+                    <option value="una imagen artística">Imagen Artística (DALL-E/Midjourney)</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">Tema o Idea Principal:</label>
+                <input type="text" id="tema" placeholder="Ej: Cómo ganar dinero con una web" class="w-full bg-slate-700 border border-slate-600 rounded px-3 py-2 outline-none focus:border-blue-500 text-white">
+            </div>
+            <button onclick="generarPrompt()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-200">GENERAR PROMPT MÁGICO ✨</button>
+        </div>
+
+        <div id="resultadoContainer" class="mt-8 hidden">
+            <div class="bg-slate-950 p-4 rounded border border-blue-900/50">
+                <p id="promptResultado" class="text-slate-300 italic"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generarPrompt() {
+            const tipo = document.getElementById('tipo').value;
+            const tema = document.getElementById('tema').value || "...";
+            const promptBase = `Actúa como un experto en ${tipo}. Quiero que crees ${tipo} sobre "${tema}".`;
+            document.getElementById('promptResultado').innerText = promptBase;
+            document.getElementById('resultadoContainer').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
