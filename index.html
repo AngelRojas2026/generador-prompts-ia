@@ -3,101 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Prompt Master | Generador de Prompts para ChatGPT</title>
-    <meta name="description" content="Crea los mejores prompts para IA gratis. Optimiza tus resultados en ChatGPT y Midjourney.">
+    <title>AI Mastermind | Tu Ingeniero de Prompts Personal</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .gradient-text { background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    </style>
 </head>
-<body class="bg-slate-900 text-white font-sans">
+<body class="bg-slate-950 text-slate-200 min-h-screen">
 
-    <div class="container mx-auto px-4 py-12 max-w-3xl">
-        <!-- HEADER -->
-        <header class="text-center mb-10">
-            <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 mb-4">
-                AI Prompt Master
+    <div class="max-w-4xl mx-auto px-6 py-16">
+        <div class="flex justify-center mb-6">
+            <span class="bg-blue-500/10 text-blue-400 text-xs font-bold px-4 py-1 rounded-full border border-blue-500/20 uppercase tracking-widest">
+                Versión 2.0 - Potenciado por IA
+            </span>
+        </div>
+
+        <header class="text-center mb-16">
+            <h1 class="text-6xl font-extrabold mb-6 tracking-tight tracking-tighter">
+                Crea Prompts <span class="gradient-text">Nivel Experto</span>
             </h1>
-            <p class="text-slate-400 text-lg">La herramienta gratuita para dominar la Inteligencia Artificial.</p>
+            <p class="text-slate-400 text-lg max-w-xl mx-auto leading-relaxed">
+                No le preguntes a la IA, ordénale como un profesional. Configura tu experto y obtén resultados un 300% más precisos.
+            </p>
         </header>
 
-        <!-- HERRAMIENTA -->
-        <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700 mb-10">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                    <label class="block text-sm font-semibold mb-2 text-blue-300">¿Qué quieres crear?</label>
-                    <select id="tipo" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 outline-none focus:border-blue-500 text-white">
-                        <option value="un artículo para blog">Artículo para Blog</option>
-                        <option value="un guion de YouTube">Guion de YouTube</option>
-                        <option value="una imagen artística">Imagen (DALL-E/Midjourney)</option>
-                        <option value="un correo de ventas">Email de Ventas</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-2 text-blue-300">Tema o Idea:</label>
-                    <input type="text" id="tema" placeholder="Ej: Dieta keto para principiantes" class="w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 outline-none focus:border-blue-500 text-white">
-                </div>
-            </div>
-
-            <button onclick="generarPrompt()" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold py-4 rounded-xl transition all shadow-lg transform hover:-translate-y-1">
-                GENERAR PROMPT MÁGICO ✨
-            </button>
-
-            <div id="resultadoContainer" class="mt-8 hidden animate-fade-in">
-                <h3 class="text-sm font-bold text-emerald-400 mb-2 uppercase tracking-widest">Prompt Generado:</h3>
-                <div class="bg-slate-950 p-5 rounded-lg border border-emerald-900/30 relative">
-                    <p id="promptResultado" class="text-slate-300 leading-relaxed"></p>
-                    <button onclick="copiarPrompt()" class="mt-4 text-xs bg-blue-600/20 text-blue-400 border border-blue-400/30 px-4 py-2 rounded-full hover:bg-blue-600 hover:text-white transition">
-                        Copiar al portapapeles
+        <main class="grid gap-8">
+            <section>
+                <h3 class="text-sm font-bold text-slate-500 uppercase mb-4 tracking-widest">1. Selecciona al Experto</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="roleSelector">
+                    <button onclick="selectRole('Marketer Pro', this)" class="role-card glass p-4 rounded-2xl text-left hover:border-blue-500 transition-all border-2 border-transparent">
+                        <div class="text-2xl mb-2">🚀</div>
+                        <div class="font-bold text-white">Marketer Pro</div>
+                        <div class="text-xs text-slate-400">Especialista en ventas y copywriting persuasivo.</div>
+                    </button>
+                    <button onclick="selectRole('Senior Dev', this)" class="role-card glass p-4 rounded-2xl text-left hover:border-emerald-500 transition-all border-2 border-transparent">
+                        <div class="text-2xl mb-2">💻</div>
+                        <div class="font-bold text-white">Senior Dev</div>
+                        <div class="text-xs text-slate-400">Optimización de código y lógica compleja.</div>
+                    </button>
+                    <button onclick="selectRole('Content Creator', this)" class="role-card glass p-4 rounded-2xl text-left hover:border-pink-500 transition-all border-2 border-transparent">
+                        <div class="text-2xl mb-2">🤳</div>
+                        <div class="font-bold text-white">Content Creator</div>
+                        <div class="text-xs text-slate-400">Guiones virales para TikTok, Reels y YouTube.</div>
                     </button>
                 </div>
+            </section>
+
+            <section class="glass p-8 rounded-3xl">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Objetivo del Proyecto</label>
+                        <input type="text" id="tema" placeholder="Ej: Vender zapatillas de running..." 
+                        class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Tono de Voz</label>
+                        <select id="tono" class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="Sarcástico y divertido">Sarcástico y divertido</option>
+                            <option value="Corporativo y elegante">Corporativo y elegante</option>
+                            <option value="Agresivo de ventas">Agresivo de ventas</option>
+                            <option value="Inspirador">Inspirador</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="generate()" class="w-full bg-white text-slate-950 font-black py-4 rounded-2xl hover:bg-blue-400 transition-colors uppercase tracking-tighter text-lg shadow-xl shadow-blue-500/10">
+                    Construir Prompt Maestro →
+                </button>
+            </section>
+
+            <section id="resultBox" class="hidden animate-in fade-in duration-700">
+                <div class="bg-gradient-to-br from-blue-600/20 to-purple-600/20 p-1 rounded-3xl">
+                    <div class="bg-slate-950 p-8 rounded-[22px] relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4">
+                            <span class="text-[100px] opacity-5 select-none font-black">AI</span>
+                        </div>
+                        <p id="output" class="text-lg text-slate-300 leading-relaxed relative z-10 font-mono text-sm"></p>
+                        <button onclick="copy()" class="mt-6 bg-slate-800 hover:bg-slate-700 px-6 py-2 rounded-full text-sm font-bold transition">Copiar Código</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <section class="mt-24 border-t border-slate-800 pt-16">
+            <h2 class="text-3xl font-bold mb-8">¿Por qué esta herramienta es diferente?</h2>
+            <div class="grid md:grid-cols-2 gap-8 text-slate-400">
+                <p>La mayoría de la gente falla con la IA porque le da instrucciones mediocres. Nuestra plataforma utiliza <strong>Ingeniería de Prompts (Prompt Engineering)</strong> avanzada para estructurar tus peticiones bajo el framework "Persona-Contexto-Tarea".</p>
+                <p>Al seleccionar un experto, inyectamos automáticamente parámetros de temperatura y estilo que ChatGPT reconoce para desbloquear su máximo potencial creativo.</p>
             </div>
-        </div>
-
-        <!-- SECCIÓN DE MONETIZACIÓN (DONACIÓN) -->
-        <div class="text-center mb-12 p-6 bg-blue-900/20 rounded-xl border border-blue-500/20">
-            <p class="text-slate-300 mb-4">¿Te sirvió la herramienta? Apoya este proyecto gratuito.</p>
-            <a href="https://ko-fi.com" target="_blank" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full font-bold transition">
-                ☕ Cómprame un café
-            </a>
-        </div>
-
-        <!-- CONTENIDO SEO (ESTO ES LO QUE TE DARÁ DINERO) -->
-        <article class="prose prose-invert max-w-none border-t border-slate-800 pt-10">
-            <h2 class="text-2xl font-bold text-white mb-4">¿Por qué usar un Generador de Prompts?</h2>
-            <p class="text-slate-400 mb-6">
-                Para obtener los mejores resultados de la <strong>Inteligencia Artificial</strong> como ChatGPT o Claude, no basta con hacer una pregunta simple. Necesitas estructura, contexto y un rol definido. Nuestra herramienta gratuita te ayuda a crear esa estructura automáticamente.
-            </p>
-            
-            <h3 class="text-xl font-semibold text-blue-300 mb-2">Consejos para mejorar tus prompts</h3>
-            <ul class="list-disc list-inside text-slate-400 space-y-2">
-                <li>Define un <strong>rol</strong> claro (ej. "Actúa como un experto en SEO").</li>
-                <li>Sé específico con el <strong>tono</strong> (formal, divertido, técnico).</li>
-                <li>Indica el <strong>formato de salida</strong> (una tabla, una lista, un código).</li>
-            </ul>
-        </article>
-
-        <!-- FOOTER -->
-        <footer class="mt-20 text-center text-slate-500 text-sm">
-            <p>&copy; 2026 AI Prompt Master - Herramienta de Código Abierto.</p>
-        </div>
+        </section>
     </div>
 
     <script>
-        function generarPrompt() {
-            const tipo = document.getElementById('tipo').value;
-            const tema = document.getElementById('tema').value || "...";
-            let promptBase = `Actúa como un experto en ${tipo}. Quiero que redactes ${tipo} sobre "${tema}". El contenido debe ser original, profesional y fácil de entender.`;
-            
-            if(tipo.includes("imagen")) {
-                promptBase = `Prompt para IA de imagen: "${tema}", cinematic lighting, ultra-detailed, 8k, photorealistic, artstation style.`;
-            }
+        let selectedRole = 'Marketer Pro';
 
-            document.getElementById('promptResultado').innerText = promptBase;
-            document.getElementById('resultadoContainer').classList.remove('hidden');
+        function selectRole(role, el) {
+            selectedRole = role;
+            document.querySelectorAll('.role-card').forEach(c => c.classList.remove('border-blue-500', 'border-emerald-500', 'border-pink-500', 'bg-slate-800'));
+            el.classList.add('bg-slate-800');
+            if(role === 'Marketer Pro') el.classList.add('border-blue-500');
+            if(role === 'Senior Dev') el.classList.add('border-emerald-500');
+            if(role === 'Content Creator') el.classList.add('border-pink-500');
         }
 
-        function copiarPrompt() {
-            const texto = document.getElementById('promptResultado').innerText;
-            navigator.clipboard.writeText(texto);
-            alert("¡Copiado con éxito!");
+        function generate() {
+            const tema = document.getElementById('tema').value || "...";
+            const tono = document.getElementById('tono').value;
+            const prompt = `CONTEXTO: Actúa como un ${selectedRole} de clase mundial con 15 años de experiencia. 
+TAREA: Necesito que desarrolles una estrategia completa sobre: "${tema}". 
+RESTRICCIONES: El tono debe ser ${tono}. Evita clichés y asegúrate de que el contenido sea accionable y de alto impacto. 
+FORMATO: Estructura la respuesta con puntos clave y una conclusión potente.`;
+            
+            document.getElementById('output').innerText = prompt;
+            document.getElementById('resultBox').classList.remove('hidden');
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        function copy() {
+            navigator.clipboard.writeText(document.getElementById('output').innerText);
+            alert("Prompt copiado al portapapeles. ¡Pégalo en tu IA favorita!");
         }
     </script>
 </body>
