@@ -19,6 +19,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
         }
         @keyframes gradient {
             0% { background-position: 0% 50%; }
@@ -29,21 +30,23 @@
             width: 100vw;
             height: 100vh;
             background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(25px);
+            backdrop-filter: blur(30px);
             display: flex;
             flex-direction: column;
         }
         .chat-area::-webkit-scrollbar { width: 6px; }
         .chat-area::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 10px; }
         
-        .bubble-ai { background: white; border: 1px solid rgba(99, 102, 241, 0.1); shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        .bubble-user { background: #4f46e5; color: white; box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4); }
+        .bubble-ai { background: white; border: 1px solid rgba(99, 102, 241, 0.1); }
+        .bubble-user { background: #4f46e5; color: white; box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3); }
+        
+        /* Animación sutil de entrada */
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 
     <script type="module">
         import { client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
-
-        let chatHistory = [];
 
         async function enviar() {
             const input = document.getElementById("prompt");
@@ -52,10 +55,9 @@
             
             if(!text) return;
 
-            // UI: Mensaje usuario
             input.value = "";
             chat.innerHTML += `
-                <div class="flex justify-end mb-6">
+                <div class="flex justify-end mb-6 fade-in">
                     <div class="bubble-user p-4 rounded-2xl rounded-tr-none max-w-[85%] md:max-w-[70%]">
                         ${text}
                     </div>
@@ -63,28 +65,27 @@
             
             const aiId = "ai-" + Date.now();
             chat.innerHTML += `
-                <div class="flex justify-start mb-6">
+                <div class="flex justify-start mb-6 fade-in">
                     <div id="${aiId}" class="bubble-ai p-5 rounded-2xl rounded-tl-none max-w-[90%] md:max-w-[80%] text-gray-800 border shadow-sm">
                         <span class="text-[10px] font-black text-indigo-500 uppercase block mb-2 tracking-widest">EduSmart AI</span>
-                        <div class="typing-text">Analizando tu duda escolar...</div>
+                        <div class="typing-text italic text-gray-400">EduSmart está analizando...</div>
                     </div>
                 </div>`;
             
             chat.scrollTop = chat.scrollHeight;
 
             try {
-                // LLAMADA A LA API
+                // RECUERDA: Verifica que este nombre sea igual a tu Space
                 const app = await client("Rojas2026/tutor-ia-escolar");
-                const result = await app.predict("/chat", [text, chatHistory]);
+                const result = await app.predict("/chat", { message: text });
 
                 const aiResponse = result.data[0];
+                document.getElementById(aiId).querySelector(".typing-text").classList.remove("italic", "text-gray-400");
                 document.getElementById(aiId).querySelector(".typing-text").innerHTML = aiResponse.replace(/\n/g, '<br>');
                 
-                chatHistory.push([text, aiResponse]);
-
             } catch (err) {
                 console.error(err);
-                document.getElementById(aiId).querySelector(".typing-text").innerHTML = "⚠️ El servidor está despertando. Espera 10 segundos y vuelve a enviar la pregunta.";
+                document.getElementById(aiId).querySelector(".typing-text").innerHTML = "⚠️ El servidor se está iniciando. Por favor, reintenta en 15 segundos.";
             }
             chat.scrollTop = chat.scrollHeight;
         }
@@ -99,15 +100,17 @@
 
     <div class="main-container">
         
-        <!-- Header Superior -->
-        <header class="p-5 border-b border-gray-200/50 flex justify-between items-center bg-white/30">
+        <!-- Navbar Superior -->
+        <header class="p-5 border-b border-gray-200/50 flex justify-between items-center bg-white/40">
             <div class="flex items-center gap-3">
                 <div class="bg-indigo-600 p-2 rounded-xl shadow-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v7" />
                     </svg>
                 </div>
-                <h1 class="text-2xl font-800 text-indigo-950 tracking-tighter">EduSmart <span class="text-indigo-600 font-normal">IA</span></h1>
+                <h1 class="text-2xl font-800 text-indigo-950 tracking-tighter">EduSmart <span class="text-indigo-600 font-normal">2026</span></h1>
             </div>
             
             <a href="https://ko-fi.com/angelrojas2026" target="_blank" class="hover:scale-105 transition active:scale-95">
@@ -115,27 +118,27 @@
             </a>
         </header>
 
-        <!-- Espacio de Mensajes (Margen Adaptado) -->
+        <!-- Área de Chat -->
         <div id="chatBox" class="chat-area flex-1 overflow-y-auto p-4 md:px-20 lg:px-64 py-10">
-            <div class="bg-white/50 border border-indigo-100 p-8 rounded-[2rem] text-center mb-10 shadow-sm">
-                <h2 class="text-2xl font-bold text-indigo-900 mb-2">¡Hola Estudiante! 👋</h2>
-                <p class="text-gray-600">Pregúntame cualquier duda de tus materias. Estoy listo para ayudarte.</p>
+            <div class="bg-white/60 border border-indigo-100 p-8 rounded-[2.5rem] text-center mb-10 shadow-sm border-dashed">
+                <h2 class="text-3xl font-black text-indigo-900 mb-2">¡Bienvenido al Futuro Escolar!</h2>
+                <p class="text-gray-600 font-medium text-lg">Pregunta lo que necesites para tu tarea de hoy.</p>
             </div>
         </div>
 
-        <!-- Input Fijo Abajo -->
-        <footer class="p-6 md:px-20 lg:px-64 bg-white/20 backdrop-blur-lg border-t border-gray-200/50">
+        <!-- Input Fijo -->
+        <footer class="p-6 md:px-20 lg:px-64 bg-white/30 backdrop-blur-xl border-t border-gray-200/30">
             <div class="max-w-5xl mx-auto flex gap-3 h-16">
                 <input type="text" id="prompt" autocomplete="off"
-                    class="flex-1 px-8 rounded-2xl bg-white shadow-xl border-2 border-transparent focus:border-indigo-500 focus:outline-none text-gray-700 text-lg transition-all"
-                    placeholder="¿Qué tarea resolveremos hoy?">
+                    class="flex-1 px-8 rounded-2xl bg-white shadow-2xl border-2 border-transparent focus:border-indigo-500 focus:outline-none text-gray-700 text-lg transition-all"
+                    placeholder="¿Cuál es tu duda de física, química o historia?">
                 
                 <button onclick="enviar()" class="bg-indigo-600 text-white px-10 rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-xl active:scale-95 flex items-center">
                     Enviar
                 </button>
             </div>
-            <p class="text-[10px] text-center text-indigo-900/50 mt-4 font-bold uppercase tracking-[0.2em]">
-                SISTEMA EDUCATIVO PRO 2026 | BY ROJAS2026
+            <p class="text-[10px] text-center text-indigo-900/40 mt-4 font-bold uppercase tracking-[0.3em]">
+                Propulsado por Inteligencia Artificial de Alto Rendimiento
             </p>
         </footer>
 
