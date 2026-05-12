@@ -1,173 +1,194 @@
+from weasyprint import HTML
+
+# Definición del contenido HTML completo para el usuario
+html_content = """
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Mastermind | La IA que hace tus tareas mejor</title>
+    <title>AI Mastermind | Plataforma de Ingeniería Académica</title>
+    
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1063/1063372.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; scroll-behavior: smooth; }
-        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); }
-        .card-pop:hover { transform: translateY(-5px); border-color: #facc15; box-shadow: 0 10px 30px -10px rgba(250, 204, 21, 0.2); }
-        .gradient-text { background: linear-gradient(90deg, #facc15, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #020617; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
+        .gradient-border { border: 1px solid transparent; background: linear-gradient(to right, #1e293b, #1e293b) padding-box, linear-gradient(to right, #facc15, #f97316) border-box; }
+        .accent-text { color: #facc15; }
+        input, select, textarea { background: #0f172a !important; border: 1px solid #334155 !important; color: white !important; }
+        .btn-primary { background: linear-gradient(135deg, #facc15 0%, #eab308 100%); transition: all 0.3s ease; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(234, 179, 8, 0.4); }
     </style>
 </head>
-<body class="bg-[#020617] text-slate-200">
+<body class="bg-[#020617] text-slate-300">
 
-    <!-- BARRA DE NAVEGACIÓN SIMPLE -->
-    <nav class="border-b border-slate-800 p-4 sticky top-0 bg-[#020617]/80 backdrop-blur-md z-50">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <span class="font-black text-xl tracking-tighter">AI <span class="text-yellow-400">MASTERMIND</span></span>
-            <a href="https://ko-fi.com/angelrojas2026" target="_blank" class="text-xs bg-yellow-400 text-black px-4 py-2 rounded-full font-bold hover:bg-yellow-300 transition">APOYAR PROYECTO</a>
+    <nav class="border-b border-slate-800 p-5 sticky top-0 bg-[#020617]/90 backdrop-blur-xl z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center">
+                    <span class="text-black font-black text-xl">M</span>
+                </div>
+                <span class="font-bold text-xl tracking-tight text-white">AI <span class="text-yellow-400">MASTERMIND</span></span>
+            </div>
+            <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-400">
+                <a href="#" class="hover:text-yellow-400 transition">Metodología</a>
+                <a href="#" class="hover:text-yellow-400 transition">Roles</a>
+                <a href="#" class="hover:text-yellow-400 transition">API</a>
+            </div>
+            <a href="https://ko-fi.com/angelrojas2026" target="_blank" class="text-xs bg-white/5 hover:bg-white/10 text-white px-5 py-2.5 rounded-xl border border-white/10 transition font-semibold">
+                ☕ Apoyar Investigación
+            </a>
         </div>
     </nav>
 
-    <div class="max-w-6xl mx-auto px-6 py-12">
+    <main class="max-w-5xl mx-auto px-6 py-16">
         
-        <!-- HERO SECTION -->
         <header class="text-center mb-16">
-            <h1 class="text-6xl md:text-7xl font-black mb-6 tracking-tighter leading-none">
-                Saca un 10 con <br><span class="gradient-text">Inteligencia Artificial</span>
+            <span class="text-yellow-500 font-bold text-xs uppercase tracking-[0.3em] mb-4 block">Professional Academic Intelligence</span>
+            <h1 class="text-5xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">
+                Optimiza tu Rendimiento <br>Académico con <span class="text-yellow-400">IA</span>
             </h1>
-            <p class="text-slate-400 text-lg max-w-2xl mx-auto mb-8 font-medium">
-                La herramienta definitiva para estudiantes. Genera prompts que tus profesores amarán.
+            <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+                Generador de prompts estructurados bajo estándares educativos internacionales para estudiantes y docentes.
             </p>
-            
-            <!-- KO-FI INTEGRADO -->
-            <div class="inline-block glass p-2 rounded-2xl border-yellow-500/20">
-                <a href="https://ko-fi.com/angelrojas2026" target="_blank" class="flex items-center space-x-3 px-6 py-2">
-                    <img src="https://storage.ko-fi.com/cdn/cup-border.png" class="w-6 animate-bounce">
-                    <span class="text-sm font-bold text-yellow-400 italic">¿Te ahorré tiempo? ¡Invítame un café!</span>
-                </a>
-            </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-            
-            <!-- COLUMNA IZQUIERDA: CONFIGURADOR -->
-            <div class="lg:col-span-2 space-y-8">
-                <section class="glass p-8 rounded-[2rem] border-white/10 shadow-2xl">
-                    <h2 class="text-xl font-bold mb-6 flex items-center">
-                        <span class="bg-yellow-400 text-black w-8 h-8 rounded-lg flex items-center justify-center mr-3 text-sm">01</span>
-                        Configura tu Tarea
-                    </h2>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <button onclick="setExpert('Tutor Académico', this)" class="role-btn p-4 rounded-xl border-2 border-slate-700 bg-slate-800/50 hover:bg-slate-800 transition-all text-left">
-                            <p class="font-bold text-white">👨‍🏫 Tutor Académico</p>
-                            <p class="text-[10px] text-slate-400 uppercase">Para entender temas complejos</p>
-                        </button>
-                        <button onclick="setExpert('Escritor de Ensayos', this)" class="role-btn p-4 rounded-xl border-2 border-slate-700 bg-slate-800/50 hover:bg-slate-800 transition-all text-left">
-                            <p class="font-bold text-white">✍️ Escritor Maestro</p>
-                            <p class="text-[10px] text-slate-400 uppercase">Para ensayos y tesis</p>
-                        </button>
+        <div class="glass p-8 md:p-10 rounded-[2.5rem] shadow-2xl border-white/5 mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                
+                <div class="space-y-6">
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">1. Perfil de Usuario</label>
+                        <select id="userRole" onchange="updateOptions()" class="w-full rounded-xl px-4 py-3 outline-none focus:border-yellow-400 transition">
+                            <option value="estudiante">🎓 Modo Estudiante</option>
+                            <option value="profesor">👨‍🏫 Modo Profesor / Investigador</option>
+                        </select>
                     </div>
 
-                    <div class="mb-6">
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 block">¿Qué necesitas estudiar hoy?</label>
-                        <textarea id="tema" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-2xl px-6 py-4 focus:ring-2 focus:ring-yellow-400 outline-none text-white placeholder-slate-600 transition-all shadow-inner" placeholder="Pega aquí el tema de tu tarea..."></textarea>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">2. Nivel Académico</label>
+                        <select id="academicLevel" class="w-full rounded-xl px-4 py-3 outline-none focus:border-yellow-400 transition">
+                            <option value="Secundaria">Educación Secundaria</option>
+                            <option value="Pregrado Universitario">Pregrado (University)</option>
+                            <option value="Postgrado/Maestría">Postgrado / Maestría</option>
+                            <option value="Doctorado/PhD">Doctorado / PhD</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">3. Tipo de Tarea</label>
+                        <select id="taskType" class="w-full rounded-xl px-4 py-3 outline-none focus:border-yellow-400 transition">
+                            </select>
                     </div>
 
-                    <button onclick="generate()" class="w-full bg-yellow-400 hover:bg-yellow-300 text-black font-black py-5 rounded-2xl transition-all shadow-xl shadow-yellow-400/10 text-xl tracking-tighter uppercase">
-                        GENERAR ESTRATEGIA DE NOTA 10 🚀
-                    </button>
-                </section>
-
-                <!-- RESULTADO -->
-                <section id="resultBox" class="hidden">
-                    <div class="bg-gradient-to-br from-yellow-400/20 to-orange-500/20 p-8 rounded-[2rem] border border-yellow-500/30 relative overflow-hidden">
-                        <div class="flex justify-between items-center mb-6">
-                            <span class="bg-yellow-400 text-black text-[10px] font-black px-3 py-1 rounded-md">PROMPT LISTO</span>
-                            <button onclick="copy()" class="text-xs font-bold text-yellow-400 hover:underline">COPIAR TEXTO</button>
-                        </div>
-                        <p id="output" class="text-slate-200 font-mono text-sm leading-relaxed whitespace-pre-line"></p>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">4. Enfoque / Método</label>
+                        <select id="method" class="w-full rounded-xl px-4 py-3 outline-none focus:border-yellow-400 transition">
+                            <option value="Analítico">Análisis Crítico</option>
+                            <option value="Sintético">Resumen Ejecutivo</option>
+                            <option value="Socrático">Método Socrático (Guíame)</option>
+                            <option value="Práctico">Resolución de Problemas</option>
+                        </select>
                     </div>
-                </section>
+                </div>
             </div>
 
-            <!-- COLUMNA DERECHA: LO MÁS POPULAR (PARA SEO Y CLICS) -->
-            <aside class="space-y-6">
-                <h3 class="font-black text-xs uppercase tracking-[0.2em] text-slate-500">🔥 Lo más buscado</h3>
-                
-                <div onclick="fastPrompt('Fotosíntesis', 'Tutor Académico')" class="card-pop glass p-4 rounded-2xl cursor-pointer border-white/5 transition-all">
-                    <p class="text-xs font-bold text-yellow-400 mb-1 italic">Ciencias</p>
-                    <p class="text-sm font-bold text-white">Explicar la Fotosíntesis</p>
-                    <p class="text-[10px] text-slate-500 mt-2">Usado por 1.2k estudiantes hoy</p>
-                </div>
+            <div class="mb-8">
+                <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">5. Materia o Tópico de Investigación</label>
+                <textarea id="topic" rows="4" class="w-full rounded-2xl px-6 py-4 outline-none focus:border-yellow-400 transition-all placeholder-slate-600" placeholder="Ej: Las implicaciones éticas de la edición genética CRISPR en humanos..."></textarea>
+            </div>
 
-                <div onclick="fastPrompt('La Segunda Guerra Mundial', 'Escritor de Ensayos')" class="card-pop glass p-4 rounded-2xl cursor-pointer border-white/5 transition-all">
-                    <p class="text-xs font-bold text-blue-400 mb-1 italic">Historia</p>
-                    <p class="text-sm font-bold text-white">Ensayo sobre la 2da Guerra</p>
-                    <p class="text-[10px] text-slate-500 mt-2">Ideal para 4to y 5to año</p>
-                </div>
-
-                <div onclick="fastPrompt('Límites y Derivadas', 'Tutor Académico')" class="card-pop glass p-4 rounded-2xl cursor-pointer border-white/5 transition-all">
-                    <p class="text-xs font-bold text-emerald-400 mb-1 italic">Matemáticas</p>
-                    <p class="text-sm font-bold text-white">Guía de Derivadas paso a paso</p>
-                    <p class="text-[10px] text-slate-500 mt-2">Para universitarios</p>
-                </div>
-
-                <!-- MINI BANNER KO-FI -->
-                <div class="bg-blue-600 p-6 rounded-[2rem] text-center shadow-lg shadow-blue-600/20">
-                    <p class="text-white font-black text-lg leading-tight mb-4">¿Te gusta que sea GRATIS?</p>
-                    <a href="https://ko-fi.com/angelrojas2026" target="_blank" class="block bg-white text-blue-600 font-bold py-3 rounded-xl hover:bg-slate-100 transition">
-                        Invítame un Café ☕
-                    </a>
-                </div>
-            </aside>
+            <button onclick="generatePrompt()" class="btn-primary w-full text-black font-extrabold py-5 rounded-2xl text-lg uppercase tracking-tighter shadow-xl">
+                Generar Protocolo de Estudio ⚡
+            </button>
         </div>
 
-        <!-- FOOTER & SEO -->
-        <footer class="mt-32 pt-12 border-t border-slate-900 text-center">
-            <p class="text-slate-600 text-sm mb-4">Creado por Ángel Rojas para estudiantes de todo el mundo.</p>
-            <div class="flex justify-center space-x-6 text-xs font-bold text-slate-700 uppercase tracking-widest">
-                <span>Privacidad</span>
-                <span>Código Abierto</span>
-                <span>2026 AI Mastermind</span>
+        <section id="resultSection" class="hidden animate-in fade-in duration-700">
+            <div class="gradient-border p-1 rounded-[2rem]">
+                <div class="bg-[#0f172a] p-8 rounded-[1.9rem]">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <h3 class="text-white font-bold text-lg mb-1">Prompt Estructurado Listo</h3>
+                            <p class="text-xs text-slate-500">Copia y pega este comando en ChatGPT, Claude o Gemini.</p>
+                        </div>
+                        <button onclick="copyToClipboard()" class="bg-yellow-400/10 hover:bg-yellow-400/20 text-yellow-400 px-4 py-2 rounded-lg text-xs font-bold transition">
+                            COPIAR COMANDO
+                        </button>
+                    </div>
+                    <div class="bg-black/40 p-6 rounded-xl border border-white/5 shadow-inner">
+                        <p id="output" class="text-slate-300 font-mono text-sm leading-relaxed whitespace-pre-line"></p>
+                    </div>
+                </div>
             </div>
-        </footer>
-    </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-slate-900 py-12 text-center">
+        <p class="text-slate-500 text-sm">© 2026 AI Mastermind Labs. Herramienta de código abierto para la excelencia académica.</p>
+    </footer>
 
     <script>
-        let expert = 'Tutor Académico';
+        const taskOptions = {
+            estudiante: [
+                { val: 'ensayo', text: 'Redacción de Ensayo Académico' },
+                { val: 'resumen', text: 'Resumen de Texto Complejo' },
+                { val: 'guia', text: 'Guía de Estudio para Examen' },
+                { val: 'explicacion', text: 'Explicación de Concepto (Feynman)' }
+            ],
+            profesor: [
+                { val: 'curriculo', text: 'Diseño de Plan de Clase' },
+                { val: 'examen', text: 'Generador de Evaluaciones/Exámenes' },
+                { val: 'rubrica', text: 'Creación de Rúbrica de Calificación' },
+                { val: 'investigacion', text: 'Estructura de Proyecto de Investigación' }
+            ]
+        };
 
-        function setExpert(val, el) {
-            expert = val;
-            document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('border-yellow-400', 'bg-slate-800'));
-            el.classList.add('border-yellow-400', 'bg-slate-800');
+        function updateOptions() {
+            const role = document.getElementById('userRole').value;
+            const taskSelect = document.getElementById('taskType');
+            taskSelect.innerHTML = taskOptions[role].map(opt => `<option value="${opt.val}">${opt.text}</option>`).join('');
         }
 
-        function fastPrompt(tema, rol) {
-            document.getElementById('tema').value = tema;
-            expert = rol;
-            generate();
-        }
+        function generatePrompt() {
+            const role = document.getElementById('userRole').value;
+            const level = document.getElementById('academicLevel').value;
+            const task = document.getElementById('taskType').value;
+            const method = document.getElementById('method').value;
+            const topic = document.getElementById('topic').value;
 
-        function generate() {
-            const tema = document.getElementById('tema').value;
-            if(!tema) return alert("Escribe un tema primero");
-            
-            let p = "";
-            if(expert === 'Tutor Académico') {
-                p = `Actúa como un profesor universitario experto en ${tema}. \n\nTAREA: Explícame este concepto de forma sencilla pero profunda. Usa analogías de la vida real y divide la explicación en: \n1. Definición simple.\n2. Cómo funciona paso a paso.\n3. Por qué es importante aprender esto.\n\nAl final, hazme 3 preguntas para evaluar si entendí.`;
+            if(!topic) return alert("Por favor, introduce un tema de estudio.");
+
+            let finalPrompt = "";
+
+            if(role === 'estudiante') {
+                finalPrompt = `Actúa como un Tutor Académico de alto nivel especializado en ${level}. \\n\\nOBJETIVO: Ayúdame con la siguiente tarea: "${topic}". \\n\\nINSTRUCCIONES DE EJECUCIÓN:\\n1. Adopta un enfoque ${method}.\\n2. Proporciona una explicación estructurada con terminología técnica adecuada para nivel ${level}.\\n3. Incluye ejemplos prácticos y una sección de 'Conceptos Clave'.\\n4. Cita fuentes o autores relevantes si aplica.\\n\\nFORMATO DE SALIDA: Markdown profesional con títulos y viñetas.`;
             } else {
-                p = `Actúa como un experto en redacción académica y tesis. \n\nTAREA: Ayúdame a estructurar un ensayo de nivel avanzado sobre "${tema}". \n\nNECESITO:\n- Una tesis provocativa y fuerte.\n- Un esquema de 4 párrafos principales con argumentos lógicos.\n- Una lista de fuentes sugeridas o bibliografía que debería buscar.\n- Un párrafo de introducción que atrape al lector.`;
+                finalPrompt = `Actúa como un Diseñador Instruccional y Experto Pedagógico para nivel ${level}. \\n\\nTAREA DOCENTE: Necesito diseñar un/a ${task} sobre el tema: "${topic}". \\n\\nREQUISITOS DEL MATERIAL:\\n1. El enfoque pedagógico debe ser ${method}.\\n2. Define objetivos de aprendizaje claros (Taxonomía de Bloom).\\n3. Genera el contenido estructurado listo para entregar a los alumnos.\\n4. Si es una evaluación, incluye la hoja de respuestas o criterios de calificación.\\n\\nESTÁNDAR: Calidad académica de rigor institucional.`;
             }
 
-            document.getElementById('output').innerText = p;
-            document.getElementById('resultBox').classList.remove('hidden');
-            window.scrollTo({ top: document.getElementById('resultBox').offsetTop - 100, behavior: 'smooth' });
+            document.getElementById('output').innerText = finalPrompt;
+            document.getElementById('resultSection').classList.remove('hidden');
+            window.scrollTo({ top: document.getElementById('resultSection').offsetTop - 50, behavior: 'smooth' });
         }
 
-        function copy() {
+        function copyToClipboard() {
             const text = document.getElementById('output').innerText;
             navigator.clipboard.writeText(text);
-            alert("¡Prompt copiado! Pégalo en ChatGPT y saca tu 10.");
+            alert("Protocolo académico copiado al portapapeles.");
         }
+
+        // Inicializar
+        updateOptions();
     </script>
 </body>
 </html>
+"""
+
+with open("ai_mastermind_pro.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
