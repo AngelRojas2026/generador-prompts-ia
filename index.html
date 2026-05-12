@@ -27,10 +27,15 @@
         }
         .chat-scroll::-webkit-scrollbar { width: 5px; }
         .chat-scroll::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 10px; }
+        
+        /* Animación de escritura */
+        .typing::after { content: " (escribiendo...)"; font-style: italic; font-size: 0.7rem; color: #6366f1; }
     </style>
 
     <script type="module">
         import { client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+
+        let chatHistory = [];
 
         async function preguntar() {
             const input = document.getElementById("prompt");
@@ -38,77 +43,99 @@
             const text = input.value.trim();
             
             if(!text) return;
-            
+
             // UI: Mensaje usuario
             input.value = "";
             chat.innerHTML += `
-                <div class="flex justify-end animate-bounce-in">
-                    <div class="bg-indigo-600 text-white p-4 rounded-2xl rounded-tr-none shadow-xl max-w-[80%] mb-4">
+                <div class="flex justify-end mb-4">
+                    <div class="bg-indigo-600 text-white p-4 rounded-2xl rounded-tr-none shadow-lg max-w-[80%]">
                         ${text}
+                    </div>
+                </div>`;
+            
+            // UI: Burbuja de espera de la IA
+            const aiId = "ai-" + Date.now();
+            chat.innerHTML += `
+                <div class="flex justify-start mb-4">
+                    <div id="${aiId}" class="bg-white p-4 rounded-2xl rounded-tl-none shadow-md border border-indigo-50 max-w-[85%] text-gray-800 typing">
+                        <span class="text-xs font-black text-indigo-500 uppercase block mb-1">EduSmart AI</span>
+                        Pensando...
                     </div>
                 </div>`;
             
             chat.scrollTop = chat.scrollHeight;
 
             try {
-                // CONEXIÓN AL SPACE
+                // CONEXIÓN AL SPACE (Asegúrate que el nombre sea exacto)
                 const app = await client("Rojas2026/tutor-ia-escolar");
-                const result = await app.predict("/chat", [text, []]); // Cambiado para mayor compatibilidad
+                const result = await app.predict("/chat", [text, chatHistory]);
 
-                const rawResponse = result.data[0];
+                const aiResponse = result.data[0];
+                const aiBubble = document.getElementById(aiId);
+                
+                // Actualizar burbuja con respuesta real
+                aiBubble.classList.remove("typing");
+                aiBubble.innerHTML = `<span class="text-xs font-black text-indigo-500 uppercase block mb-1">EduSmart AI</span>${aiResponse.replace(/\n/g, '<br>')}`;
+                
+                // Guardar en el historial local (se borra si recarga la página)
+                chatHistory.push([text, aiResponse]);
 
-                chat.innerHTML += `
-                    <div class="flex justify-start">
-                        <div class="bg-white p-4 rounded-2xl rounded-tl-none shadow-lg border border-indigo-50 max-w-[85%] mb-4 text-gray-800 leading-relaxed">
-                            <span class="text-xs font-black text-indigo-500 uppercase block mb-1">EduSmart AI</span>
-                            ${rawResponse}
-                        </div>
-                    </div>`;
             } catch (err) {
                 console.error(err);
-                chat.innerHTML += `<div class="text-center p-2 bg-red-100 text-red-600 rounded-lg text-xs mb-4">⚠️ El servidor está despertando. Por favor, intenta de nuevo en 10 segundos.</div>`;
+                document.getElementById(aiId).innerHTML = "⚠️ Error: El servidor está despertando o hay mucha demanda. Reintenta en unos segundos.";
+                document.getElementById(aiId).classList.remove("typing");
             }
             chat.scrollTop = chat.scrollHeight;
         }
+
+        // Hacer la función global y permitir ENTER
         window.preguntar = preguntar;
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("prompt").addEventListener("keypress", (e) => {
+                if (e.key === "Enter") preguntar();
+            });
+        });
     </script>
 </head>
 <body class="h-screen flex items-center justify-center p-2 md:p-6">
 
     <div class="glass-panel w-full max-w-5xl h-[90vh] rounded-[2rem] shadow-2xl flex flex-col overflow-hidden">
         
-        <!-- Header con Ko-fi -->
+        <!-- Header -->
         <header class="p-6 flex justify-between items-center border-b border-gray-200/50">
             <div>
-                <h1 class="text-2xl font-800 text-indigo-900 flex items-center gap-2">
-                    <span class="bg-indigo-600 text-white p-1.5 rounded-lg">🚀</span> 
-                    EduSmart <span class="text-indigo-500 text-sm font-normal">v1.0</span>
+                <h1 class="text-2xl font-black text-indigo-900 flex items-center gap-2">
+                    <span class="bg-indigo-600 text-white p-1.5 rounded-lg shadow-md">🚀</span> 
+                    EduSmart <span class="text-indigo-500 text-sm font-normal">2026</span>
                 </h1>
             </div>
-            <a href="https://ko-fi.com/angelrojas2026" target="_blank" class="transform hover:scale-110 transition">
+            <a href="https://ko-fi.com/angelrojas2026" target="_blank" class="transform hover:scale-105 transition active:scale-95">
                 <img src="https://ko-fi.com/img/githubbutton_sm.svg" alt="Ko-fi" class="h-10">
             </a>
         </header>
 
         <!-- Chat Area -->
         <div id="chatBox" class="flex-1 overflow-y-auto p-6 chat-scroll flex flex-col">
-            <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl text-indigo-700 text-center mb-8">
-                🔥 <b>¡Bienvenido al futuro!</b> Soy tu IA de alto rendimiento para bachillerato.
+            <div class="bg-indigo-50 border border-indigo-100 p-6 rounded-3xl text-indigo-700 text-center mb-8 shadow-inner">
+                <h3 class="font-800 text-lg">✨ ¡Tutoría Inteligente Activada!</h3>
+                <p class="text-sm opacity-80">Resuelvo dudas de bachillerato al instante.</p>
             </div>
         </div>
 
         <!-- Input Area -->
-        <footer class="p-6 bg-white/50 backdrop-blur-sm">
-            <div class="relative max-w-3xl mx-auto">
-                <input type="text" id="prompt" 
-                    class="w-full py-5 px-8 pr-20 bg-white rounded-3xl shadow-inner border-2 border-transparent focus:border-indigo-500 focus:outline-none text-gray-700 font-medium transition-all"
-                    placeholder="¿Qué quieres resolver hoy? Ej: Ley de Newton...">
+        <footer class="p-6 bg-white/40 backdrop-blur-md">
+            <div class="relative max-w-3xl mx-auto flex gap-2">
+                <input type="text" id="prompt" autocomplete="off"
+                    class="flex-1 py-4 px-6 bg-white rounded-2xl shadow-lg border-2 border-transparent focus:border-indigo-500 focus:outline-none text-gray-700 font-medium transition-all"
+                    placeholder="Escribe tu duda aquí...">
                 
-                <button onclick="preguntar()" class="absolute right-2 top-2 bottom-2 px-6 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all active:scale-95 shadow-lg">
+                <button onclick="preguntar()" class="bg-indigo-600 text-white px-8 rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-lg active:scale-90 flex items-center justify-center">
                     Enviar
                 </button>
             </div>
-            <p class="text-center text-[10px] text-gray-400 mt-4 font-bold tracking-widest uppercase">Propulsado por Hugging Face & Rojas2026</p>
+            <p class="text-center text-[9px] text-gray-500 mt-4 font-bold tracking-tighter uppercase opacity-60">
+                Poder IA Limitado | Rojas2026 Developer
+            </p>
         </footer>
     </div>
 
