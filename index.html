@@ -1,194 +1,63 @@
-from weasyprint import HTML
-
-# Definición del contenido HTML completo para el usuario
-html_content = """
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Mastermind | Plataforma de Ingeniería Académica</title>
-    
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1063/1063372.png">
-    
+    <title>EduSmart IA - Tutor Digital</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
-        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
-        .gradient-border { border: 1px solid transparent; background: linear-gradient(to right, #1e293b, #1e293b) padding-box, linear-gradient(to right, #facc15, #f97316) border-box; }
-        .accent-text { color: #facc15; }
-        input, select, textarea { background: #0f172a !important; border: 1px solid #334155 !important; color: white !important; }
-        .btn-primary { background: linear-gradient(135deg, #facc15 0%, #eab308 100%); transition: all 0.3s ease; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(234, 179, 8, 0.4); }
-    </style>
+    <script type="module">
+        import { client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+
+        async function enviarPregunta() {
+            const input = document.getElementById("pregunta");
+            const btn = document.getElementById("btnEnviar");
+            const chat = document.getElementById("chatBox");
+            
+            if (!input.value) return;
+
+            // Bloquear botón mientras piensa
+            const preguntaUsuario = input.value;
+            input.value = "";
+            btn.disabled = true;
+            chat.innerHTML += `<div class="mb-4 text-right"><span class="bg-blue-500 text-white p-2 rounded-lg inline-block">${preguntaUsuario}</span></div>`;
+
+            try {
+                // AQUÍ CONECTAMOS CON TU SPACE
+                // Cambia 'Rojas2026/tutor-ia-escolar' por tu usuario y nombre de space
+                const app = await client("Rojas2026/tutor-ia-escolar"); 
+                const result = await app.predict("/chat", {
+                    message: preguntaUsuario,
+                });
+
+                const respuestaIA = result.data[0];
+                chat.innerHTML += `<div class="mb-4 text-left"><span class="bg-gray-200 text-black p-2 rounded-lg inline-block">🤖 ${respuestaIA}</span></div>`;
+            } catch (error) {
+                chat.innerHTML += `<div class="text-red-500">Error: No pude conectar con la IA.</div>`;
+            } finally {
+                btn.disabled = false;
+                chat.scrollTop = chat.scrollHeight;
+            }
+        }
+        window.enviarPregunta = enviarPregunta;
+    </script>
 </head>
-<body class="bg-[#020617] text-slate-300">
+<body class="bg-gray-100 h-screen flex flex-col">
 
-    <nav class="border-b border-slate-800 p-5 sticky top-0 bg-[#020617]/90 backdrop-blur-xl z-50">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <div class="w-8 h-8 bg-yellow-400 rounded-lg flex items-center justify-center">
-                    <span class="text-black font-black text-xl">M</span>
-                </div>
-                <span class="font-bold text-xl tracking-tight text-white">AI <span class="text-yellow-400">MASTERMIND</span></span>
-            </div>
-            <div class="hidden md:flex space-x-8 text-sm font-medium text-slate-400">
-                <a href="#" class="hover:text-yellow-400 transition">Metodología</a>
-                <a href="#" class="hover:text-yellow-400 transition">Roles</a>
-                <a href="#" class="hover:text-yellow-400 transition">API</a>
-            </div>
-            <a href="https://ko-fi.com/angelrojas2026" target="_blank" class="text-xs bg-white/5 hover:bg-white/10 text-white px-5 py-2.5 rounded-xl border border-white/10 transition font-semibold">
-                ☕ Apoyar Investigación
-            </a>
+    <header class="bg-blue-600 text-white p-4 shadow-lg text-center">
+        <h1 class="text-2xl font-bold">🎓 EduSmart IA</h1>
+        <p class="text-sm">Tu asistente escolar inteligente</p>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-4" id="chatBox">
+        <div class="mb-4 text-left">
+            <span class="bg-gray-200 text-black p-2 rounded-lg inline-block">¡Hola! Soy tu tutor. ¿En qué materia necesitas ayuda hoy?</span>
         </div>
-    </nav>
-
-    <main class="max-w-5xl mx-auto px-6 py-16">
-        
-        <header class="text-center mb-16">
-            <span class="text-yellow-500 font-bold text-xs uppercase tracking-[0.3em] mb-4 block">Professional Academic Intelligence</span>
-            <h1 class="text-5xl md:text-6xl font-extrabold text-white mb-6 tracking-tight">
-                Optimiza tu Rendimiento <br>Académico con <span class="text-yellow-400">IA</span>
-            </h1>
-            <p class="text-slate-400 text-lg max-w-2xl mx-auto">
-                Generador de prompts estructurados bajo estándares educativos internacionales para estudiantes y docentes.
-            </p>
-        </header>
-
-        <div class="glass p-8 md:p-10 rounded-[2.5rem] shadow-2xl border-white/5 mb-12">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                
-                <div class="space-y-6">
-                    <div>
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">1. Perfil de Usuario</label>
-                        <select id="userRole" onchange="updateOptions()" class="w-full rounded-xl px-4 py-3 outline-none focus:border-yellow-400 transition">
-                            <option value="estudiante">🎓 Modo Estudiante</option>
-                            <option value="profesor">👨‍🏫 Modo Profesor / Investigador</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">2. Nivel Académico</label>
-                        <select id="academicLevel" class="w-full rounded-xl px-4 py-3 outline-none focus:border-yellow-400 transition">
-                            <option value="Secundaria">Educación Secundaria</option>
-                            <option value="Pregrado Universitario">Pregrado (University)</option>
-                            <option value="Postgrado/Maestría">Postgrado / Maestría</option>
-                            <option value="Doctorado/PhD">Doctorado / PhD</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="space-y-6">
-                    <div>
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">3. Tipo de Tarea</label>
-                        <select id="taskType" class="w-full rounded-xl px-4 py-3 outline-none focus:border-yellow-400 transition">
-                            </select>
-                    </div>
-
-                    <div>
-                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">4. Enfoque / Método</label>
-                        <select id="method" class="w-full rounded-xl px-4 py-3 outline-none focus:border-yellow-400 transition">
-                            <option value="Analítico">Análisis Crítico</option>
-                            <option value="Sintético">Resumen Ejecutivo</option>
-                            <option value="Socrático">Método Socrático (Guíame)</option>
-                            <option value="Práctico">Resolución de Problemas</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mb-8">
-                <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">5. Materia o Tópico de Investigación</label>
-                <textarea id="topic" rows="4" class="w-full rounded-2xl px-6 py-4 outline-none focus:border-yellow-400 transition-all placeholder-slate-600" placeholder="Ej: Las implicaciones éticas de la edición genética CRISPR en humanos..."></textarea>
-            </div>
-
-            <button onclick="generatePrompt()" class="btn-primary w-full text-black font-extrabold py-5 rounded-2xl text-lg uppercase tracking-tighter shadow-xl">
-                Generar Protocolo de Estudio ⚡
-            </button>
-        </div>
-
-        <section id="resultSection" class="hidden animate-in fade-in duration-700">
-            <div class="gradient-border p-1 rounded-[2rem]">
-                <div class="bg-[#0f172a] p-8 rounded-[1.9rem]">
-                    <div class="flex justify-between items-start mb-6">
-                        <div>
-                            <h3 class="text-white font-bold text-lg mb-1">Prompt Estructurado Listo</h3>
-                            <p class="text-xs text-slate-500">Copia y pega este comando en ChatGPT, Claude o Gemini.</p>
-                        </div>
-                        <button onclick="copyToClipboard()" class="bg-yellow-400/10 hover:bg-yellow-400/20 text-yellow-400 px-4 py-2 rounded-lg text-xs font-bold transition">
-                            COPIAR COMANDO
-                        </button>
-                    </div>
-                    <div class="bg-black/40 p-6 rounded-xl border border-white/5 shadow-inner">
-                        <p id="output" class="text-slate-300 font-mono text-sm leading-relaxed whitespace-pre-line"></p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
     </main>
 
-    <footer class="border-t border-slate-900 py-12 text-center">
-        <p class="text-slate-500 text-sm">© 2026 AI Mastermind Labs. Herramienta de código abierto para la excelencia académica.</p>
+    <footer class="p-4 bg-white border-t flex gap-2">
+        <input type="text" id="pregunta" class="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:border-blue-500" placeholder="Escribe tu duda aquí...">
+        <button onclick="enviarPregunta()" id="btnEnviar" class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold hover:bg-blue-700 transition">Enviar</button>
     </footer>
 
-    <script>
-        const taskOptions = {
-            estudiante: [
-                { val: 'ensayo', text: 'Redacción de Ensayo Académico' },
-                { val: 'resumen', text: 'Resumen de Texto Complejo' },
-                { val: 'guia', text: 'Guía de Estudio para Examen' },
-                { val: 'explicacion', text: 'Explicación de Concepto (Feynman)' }
-            ],
-            profesor: [
-                { val: 'curriculo', text: 'Diseño de Plan de Clase' },
-                { val: 'examen', text: 'Generador de Evaluaciones/Exámenes' },
-                { val: 'rubrica', text: 'Creación de Rúbrica de Calificación' },
-                { val: 'investigacion', text: 'Estructura de Proyecto de Investigación' }
-            ]
-        };
-
-        function updateOptions() {
-            const role = document.getElementById('userRole').value;
-            const taskSelect = document.getElementById('taskType');
-            taskSelect.innerHTML = taskOptions[role].map(opt => `<option value="${opt.val}">${opt.text}</option>`).join('');
-        }
-
-        function generatePrompt() {
-            const role = document.getElementById('userRole').value;
-            const level = document.getElementById('academicLevel').value;
-            const task = document.getElementById('taskType').value;
-            const method = document.getElementById('method').value;
-            const topic = document.getElementById('topic').value;
-
-            if(!topic) return alert("Por favor, introduce un tema de estudio.");
-
-            let finalPrompt = "";
-
-            if(role === 'estudiante') {
-                finalPrompt = `Actúa como un Tutor Académico de alto nivel especializado en ${level}. \\n\\nOBJETIVO: Ayúdame con la siguiente tarea: "${topic}". \\n\\nINSTRUCCIONES DE EJECUCIÓN:\\n1. Adopta un enfoque ${method}.\\n2. Proporciona una explicación estructurada con terminología técnica adecuada para nivel ${level}.\\n3. Incluye ejemplos prácticos y una sección de 'Conceptos Clave'.\\n4. Cita fuentes o autores relevantes si aplica.\\n\\nFORMATO DE SALIDA: Markdown profesional con títulos y viñetas.`;
-            } else {
-                finalPrompt = `Actúa como un Diseñador Instruccional y Experto Pedagógico para nivel ${level}. \\n\\nTAREA DOCENTE: Necesito diseñar un/a ${task} sobre el tema: "${topic}". \\n\\nREQUISITOS DEL MATERIAL:\\n1. El enfoque pedagógico debe ser ${method}.\\n2. Define objetivos de aprendizaje claros (Taxonomía de Bloom).\\n3. Genera el contenido estructurado listo para entregar a los alumnos.\\n4. Si es una evaluación, incluye la hoja de respuestas o criterios de calificación.\\n\\nESTÁNDAR: Calidad académica de rigor institucional.`;
-            }
-
-            document.getElementById('output').innerText = finalPrompt;
-            document.getElementById('resultSection').classList.remove('hidden');
-            window.scrollTo({ top: document.getElementById('resultSection').offsetTop - 50, behavior: 'smooth' });
-        }
-
-        function copyToClipboard() {
-            const text = document.getElementById('output').innerText;
-            navigator.clipboard.writeText(text);
-            alert("Protocolo académico copiado al portapapeles.");
-        }
-
-        // Inicializar
-        updateOptions();
-    </script>
 </body>
 </html>
-"""
-
-with open("ai_mastermind_pro.html", "w", encoding="utf-8") as f:
-    f.write(html_content)
