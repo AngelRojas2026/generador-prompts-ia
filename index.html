@@ -42,61 +42,67 @@
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 
-    <script type="module">
-        import { client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+   <script type="module">
+    import { client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
 
-        let chatHistory = [];
+    let chatHistory = [];
 
-        async function enviar() {
-            const input = document.getElementById("prompt");
-            const chat = document.getElementById("chatBox");
-            const text = input.value.trim();
-            
-            if(!text) return;
+    async function enviar() {
+        const input = document.getElementById("prompt");
+        const chat = document.getElementById("chatBox");
+        const text = input.value.trim();
+        
+        if(!text) return;
 
-            input.value = "";
-            chat.innerHTML += `
-                <div class="flex justify-end mb-8 animate-up">
-                    <div class="bubble-user p-5 rounded-2xl rounded-tr-none max-w-[85%] md:max-w-[65%] text-lg">
-                        ${text}
+        input.value = "";
+        chat.innerHTML += `
+            <div class="flex justify-end mb-8 animate-up">
+                <div class="bubble-user p-5 rounded-2xl rounded-tr-none max-w-[85%] md:max-w-[65%] text-lg">
+                    ${text}
+                </div>
+            </div>`;
+        
+        const aiId = "ai-" + Date.now();
+        chat.innerHTML += `
+            <div class="flex justify-start mb-8 animate-up">
+                <div id="${aiId}" class="bubble-ai p-6 rounded-2xl rounded-tl-none max-w-[95%] md:max-w-[80%] border">
+                    <div class="flex items-center gap-2 mb-3">
+                        <img src="https://img.icons8.com/fluency/48/artificial-intelligence.png" class="w-5 h-5">
+                        <span class="text-[11px] font-black text-indigo-600 uppercase tracking-widest">EduSmart AI</span>
                     </div>
-                </div>`;
+                    <div class="typing-text leading-relaxed font-medium">EduSmart está pensando...</div>
+                </div>
+            </div>`;
+        
+        chat.scrollTop = chat.scrollHeight;
+
+        try {
+            // Asegúrate que esta URL sea la de TU Space
+            const app = await client("Rojas2026/tutor-ia-escolar");
             
-            const aiId = "ai-" + Date.now();
-            chat.innerHTML += `
-                <div class="flex justify-start mb-8 animate-up">
-                    <div id="${aiId}" class="bubble-ai p-6 rounded-2xl rounded-tl-none max-w-[95%] md:max-w-[80%] border">
-                        <div class="flex items-center gap-2 mb-3">
-                            <img src="https://img.icons8.com/fluency/48/artificial-intelligence.png" class="w-5 h-5">
-                            <span class="text-[11px] font-black text-indigo-600 uppercase tracking-widest">EduSmart AI</span>
-                        </div>
-                        <div class="typing-text leading-relaxed font-medium">EduSmart está procesando tu duda...</div>
-                    </div>
-                </div>`;
+            // Cambiamos la forma de llamar a la predicción
+            const result = await app.predict(0, [	
+                text, 	// mensaje
+                chatHistory, // historial
+            ]);
+
+            // El resultado de ChatInterface suele venir en result.data[0]
+            const aiResponse = result.data[0];
+            document.getElementById(aiId).querySelector(".typing-text").innerHTML = aiResponse.replace(/\n/g, '<br>');
             
-            chat.scrollTop = chat.scrollHeight;
+            // Actualizar historial para la memoria de la IA
+            chatHistory.push([text, aiResponse]);
 
-            try {
-                // LLAMADA AL SPACE DE ROJAS2026
-                const app = await client("Rojas2026/tutor-ia-escolar");
-                const result = await app.predict("/chat", { message: text, history: chatHistory });
-
-                const aiResponse = result.data[0];
-                document.getElementById(aiId).querySelector(".typing-text").innerHTML = aiResponse.replace(/\n/g, '<br>');
-                
-                chatHistory.push([text, aiResponse]);
-
-            } catch (err) {
-                document.getElementById(aiId).querySelector(".typing-text").innerHTML = "⚠️ El servidor está despertando. Reintenta enviar tu duda en 10 segundos.";
-            }
-            chat.scrollTop = chat.scrollHeight;
+        } catch (err) {
+            console.error(err);
+            document.getElementById(aiId).querySelector(".typing-text").innerHTML = "⚠️ Error: El Space está dormido o no disponible.";
         }
+        chat.scrollTop = chat.scrollHeight;
+    }
 
-        window.enviar = enviar;
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("prompt").addEventListener("keypress", (e) => { if (e.key === "Enter") enviar(); });
-        });
-    </script>
+    window.enviar = enviar;
+    document.getElementById("prompt").addEventListener("keypress", (e) => { if (e.key === "Enter") enviar(); });
+</script>
 </head>
 <body>
 
