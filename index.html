@@ -8,7 +8,7 @@
     <!-- ICONO -->
     <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/artificial-intelligence.png">
     
-    <!-- LIBRERÍAS: Tailwind, Google Fonts y Marked (para ver bien el texto de la IA) -->
+    <!-- LIBRERÍAS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
@@ -40,98 +40,107 @@
         .bubble-ai { background: rgba(255, 255, 255, 0.95); color: #1e293b; box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
         .bubble-user { background: #6366f1; color: white; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4); }
         
-        /* Estilos para las tablas y listas que responda la IA */
-        .typing-text table { border-collapse: collapse; margin: 10px 0; width: 100%; }
+        .typing-text table { border-collapse: collapse; margin: 10px 0; width: 100%; border: 1px solid #ddd; }
         .typing-text th, .typing-text td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         .typing-text ul { list-style-type: disc; margin-left: 20px; }
+        .typing-text p { margin-bottom: 10px; }
 
         .animate-up { animation: slideUp 0.4s ease-out; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 
     <script type="module">
-    // Nota: Para producción, lo ideal es ocultar las llaves en un backend, 
-    // pero para terminar tu proyecto ahora mismo, lo configuraremos directo:
-    const OPENROUTER_API_KEY = "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";
-    let chatHistory = [];
+        // RECOMENDACIÓN: Asegúrate de que esta API Key esté activa en OpenRouter
+        const OPENROUTER_API_KEY = "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";
+        let chatHistory = [];
 
-    async function enviar() {
-        const input = document.getElementById("prompt");
-        const chat = document.getElementById("chatBox");
-        const text = input.value.trim();
-        
-        if(!text) return;
-
-        // 1. Mostrar mensaje del usuario
-        input.value = "";
-        chat.innerHTML += `
-            <div class="flex justify-end mb-8 animate-up">
-                <div class="bubble-user p-5 rounded-2xl rounded-tr-none max-w-[85%] md:max-w-[65%] text-lg">
-                    ${text}
-                </div>
-            </div>`;
-        
-        // 2. Crear burbuja de carga
-        const aiId = "ai-" + Date.now();
-        chat.innerHTML += `
-            <div class="flex justify-start mb-8 animate-up">
-                <div id="${aiId}" class="bubble-ai p-6 rounded-2xl rounded-tl-none max-w-[95%] md:max-w-[80%] border">
-                    <div class="flex items-center gap-2 mb-3">
-                        <img src="https://img.icons8.com/fluency/48/artificial-intelligence.png" class="w-5 h-5">
-                        <span class="text-[11px] font-black text-indigo-600 uppercase tracking-widest">EduSmart AI</span>
-                    </div>
-                    <div class="typing-text leading-relaxed font-medium text-gray-700">
-                        <span class="animate-pulse">EduSmart está analizando tu pregunta...</span>
-                    </div>
-                </div>
-            </div>`;
-        
-        chat.scrollTop = chat.scrollHeight;
-
-        try {
-            // 3. Petición a OpenRouter
-            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    "model": "google/gemini-2.0-flash-001", // Modelo rápido y económico
-                    "messages": [
-                        {"role": "system", "content": "Eres EduSmart IA, un tutor experto, amable y conciso. Ayudas a estudiantes con matemáticas, física e historia usando un lenguaje claro y formato Markdown (tablas, negritas, listas)."},
-                        ...chatHistory,
-                        {"role": "user", "content": text}
-                    ]
-                })
-            });
-
-            const data = await response.json();
-            const aiResponse = data.choices[0].message.content;
+        async function enviar() {
+            const input = document.getElementById("prompt");
+            const chat = document.getElementById("chatBox");
+            const text = input.value.trim();
             
-            // 4. Renderizar respuesta
-            document.getElementById(aiId).querySelector(".typing-text").innerHTML = marked.parse(aiResponse);
-            
-            // 5. Actualizar historial
-            chatHistory.push({role: "user", content: text});
-            chatHistory.push({role: "assistant", content: aiResponse});
+            if(!text) return;
 
-        } catch (err) {
-            console.error(err);
-            document.getElementById(aiId).querySelector(".typing-text").innerHTML = "⚠️ Error de conexión. Verifica tu API Key o saldo en OpenRouter.";
+            // 1. Mostrar mensaje del usuario
+            input.value = "";
+            chat.innerHTML += `
+                <div class="flex justify-end mb-8 animate-up">
+                    <div class="bubble-user p-5 rounded-2xl rounded-tr-none max-w-[85%] md:max-w-[65%] text-lg">
+                        ${text}
+                    </div>
+                </div>`;
+            
+            // 2. Crear burbuja de carga
+            const aiId = "ai-" + Date.now();
+            chat.innerHTML += `
+                <div class="flex justify-start mb-8 animate-up">
+                    <div id="${aiId}" class="bubble-ai p-6 rounded-2xl rounded-tl-none max-w-[95%] md:max-w-[80%] border">
+                        <div class="flex items-center gap-2 mb-3">
+                            <img src="https://img.icons8.com/fluency/48/artificial-intelligence.png" class="w-5 h-5">
+                            <span class="text-[11px] font-black text-indigo-600 uppercase tracking-widest">EduSmart AI</span>
+                        </div>
+                        <div class="typing-text leading-relaxed font-medium text-gray-700">
+                            <span class="animate-pulse">EduSmart está analizando tu pregunta...</span>
+                        </div>
+                    </div>
+                </div>`;
+            
+            chat.scrollTop = chat.scrollHeight;
+
+            try {
+                // 3. Petición a OpenRouter corregida
+                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+                        "HTTP-Referer": window.location.origin, // Requisito de OpenRouter
+                        "X-Title": "EduSmart AI",                // Requisito de OpenRouter
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "model": "google/gemini-2.0-flash-exp:free", // Versión gratuita estable
+                        "messages": [
+                            {"role": "system", "content": "Eres EduSmart IA, un tutor experto, amable y conciso. Ayudas a estudiantes con matemáticas, física e historia usando un lenguaje claro y formato Markdown (tablas, negritas, listas)."},
+                            ...chatHistory,
+                            {"role": "user", "content": text}
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+
+                // Manejo de errores específicos de la API
+                if (data.error) {
+                    throw new Error(data.error.message || "Error desconocido en la API");
+                }
+
+                const aiResponse = data.choices[0].message.content;
+                
+                // 4. Renderizar respuesta con Marked
+                document.getElementById(aiId).querySelector(".typing-text").innerHTML = marked.parse(aiResponse);
+                
+                // 5. Actualizar historial
+                chatHistory.push({role: "user", content: text});
+                chatHistory.push({role: "assistant", content: aiResponse});
+
+            } catch (err) {
+                console.error("Error completo:", err);
+                document.getElementById(aiId).querySelector(".typing-text").innerHTML = 
+                    `<div class="text-red-500 font-bold">⚠️ Error: ${err.message}</div>
+                     <div class="text-xs text-gray-500 mt-2">Verifica que tu API Key sea válida o que tengas conexión a internet.</div>`;
+            }
+            chat.scrollTop = chat.scrollHeight;
         }
-        chat.scrollTop = chat.scrollHeight;
-    }
 
-    // Funciones globales
-    window.enviar = enviar;
+        // Exponer la función al objeto window para el onclick
+        window.enviar = enviar;
 
-    document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById("prompt").addEventListener("keypress", (e) => { 
-            if (e.key === "Enter") enviar(); 
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("prompt").addEventListener("keypress", (e) => { 
+                if (e.key === "Enter") enviar(); 
+            });
         });
-    });
-</script>
+    </script>
 </head>
 <body>
 
@@ -141,7 +150,7 @@
         <header class="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
             <div class="flex items-center gap-4">
                 <img src="https://img.icons8.com/fluency/48/artificial-intelligence.png" class="w-10 h-10 shadow-lg">
-                <h1 class="text-3xl font-800 text-white tracking-tighter">EduSmart <span class="text-indigo-400 font-light">IA</span></h1>
+                <h1 class="text-3xl font-[800] text-white tracking-tighter">EduSmart <span class="text-indigo-400 font-light">IA</span></h1>
             </div>
             
             <a href="https://ko-fi.com/angelrojas2026" target="_blank" class="hover:scale-105 transition active:scale-95">
